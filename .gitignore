@@ -1,0 +1,14 @@
+node_modules
+dist
+.next
+.turbo
+*.tsbuildinfo
+.env
+.env.local
+*.log
+.DS_Store
+
+# Playwright artifacts and any e2e screenshots stay out of version control;
+# move keepers to docs/screenshots/ instead.
+.playwright-mcp
+e2e-*.png

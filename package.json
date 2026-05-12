@@ -1,0 +1,24 @@
+{
+  "name": "ag-ui-claude-agents",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Pluggable AG-UI + Claude Agent SDK libraries (server / react / pdf / core) plus a DevOps demo.",
+  "license": "MIT",
+  "author": "mbrian23",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mbrian23/ag-ui-claude-agents"
+  },
+  "homepage": "https://github.com/mbrian23/ag-ui-claude-agents",
+  "scripts": {
+    "dev:devops:agent": "pnpm --filter agent dev",
+    "dev:devops:web": "pnpm --filter web dev",
+    "typecheck": "pnpm -r typecheck",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test"
+  },
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

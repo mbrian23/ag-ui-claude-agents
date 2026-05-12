@@ -1,0 +1,36 @@
+<!-- source: https://json-render.dev/docs/api/devtools-solid -->
+# @json-render/devtools-solid
+
+SolidJS adapter for the json-render devtools. Drop-in `<JsonRenderDevtools />` component.
+
+See the [Devtools guide](/docs/devtools) for the drop-in walkthrough.
+
+## JsonRenderDevtools
+
+```
+import { JsonRenderDevtools } from "@json-render/devtools-solid";
+
+<JSONUIProvider registry={registry}>
+  <Renderer spec={spec()} registry={registry} />
+  <JsonRenderDevtools
+    spec={spec()}
+    catalog={catalog}
+    messages={messages()}
+  />
+</JSONUIProvider>
+```
+
+### Props
+
+Same shape as the React adapter:
+
+- `spec`
+- `catalog`
+- `messages`
+- `initialOpen`
+- `position`
+- `hotkey`
+- `bufferSize`
+- `onEvent`
+
+In production builds the component renders `null`.
