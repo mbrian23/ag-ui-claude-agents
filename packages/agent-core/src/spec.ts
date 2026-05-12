@@ -9,16 +9,22 @@ interface SpecElement {
   readonly children?: readonly string[];
 }
 
-export function combineSpecs(specs: readonly unknown[]): Spec {
+/**
+ * Combine multiple Specs into one rooted at a `stack` element. Each
+ * source spec's element ids are namespaced (`m0_`, `m1_`, …) before
+ * merging to keep them unique.
+ *
+ * Callers receiving untyped agent output should filter with
+ * `isNonEmptySpec` first — this function used to silently skip
+ * non-Spec entries, which masked typos at call sites.
+ */
+export function combineSpecs(specs: readonly Spec[]): Spec {
   const elements: Record<string, unknown> = {};
   const childIds: string[] = [];
-  specs.forEach((s, i) => {
-    if (!s || typeof s !== "object") return;
-    const obj = s as { root?: string; elements?: Record<string, unknown> };
-    if (!obj.root || !obj.elements) return;
+  specs.forEach((spec, i) => {
     const prefix = `m${i}_`;
-    Object.assign(elements, renameElements(obj.elements, prefix));
-    childIds.push(prefix + obj.root);
+    Object.assign(elements, renameElements(spec.elements as Record<string, unknown>, prefix));
+    childIds.push(prefix + spec.root);
   });
   elements.__combined_root = {
     type: "stack",

@@ -153,7 +153,7 @@ ag-ui-claude-agents/
 |---|---|
 | [`docs/wiring-a-new-app.md`](docs/wiring-a-new-app.md) | End-to-end recipe for building a new domain agent + dashboard from these four packages. |
 | [`packages/agent-core/README.md`](packages/agent-core/README.md) | `defineWidget`, spec helpers, palette, tool-name constants. |
-| [`packages/agent-server/README.md`](packages/agent-server/README.md) | `createAgentServer`, `defineSkill`, bash whitelist, env validation. |
+| [`packages/agent-server/README.md`](packages/agent-server/README.md) | `createAgentServer`, `defineAgentSkill`, bash whitelist, env validation. |
 | [`packages/agent-react/README.md`](packages/agent-react/README.md) | `<ChatShell>`, `<WidgetSurface>`, `<WidgetCard>`, markdown helpers. |
 | [`packages/agent-pdf/README.md`](packages/agent-pdf/README.md) | `createPdfRoute`, `buildPdfRegistry`, chart primitives. |
 | [`examples/devops/web/README.md`](examples/devops/web/README.md) | Demo-specific wiring notes. |

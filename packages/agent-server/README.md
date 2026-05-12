@@ -7,17 +7,17 @@ Generic AG-UI HTTP/SSE server backed by the Claude Agent SDK. Compose a list of 
 | Export | Purpose |
 |---|---|
 | `createAgentServer(opts)` | Returns `{ server, handler, adapter, route, port }`. `server.listen(port)` starts the HTTP listener; `handler` is the bare `RequestListener` if you want to mount it in your own server. |
-| `defineSkill({...})` | Typed factory for a `Skill`. |
-| `Skill`, `SkillTools` | Structural types. |
+| `defineAgentSkill({...})` | Typed factory for an `AgentSkill`. |
+| `AgentSkill`, `AgentSkillTools` | Structural types. Named to disambiguate from Claude Code's markdown-based Skills — unrelated abstraction. |
 | `tool`, `createSdkMcpServer` | Re-exports from `@anthropic-ai/claude-agent-sdk` so consumers don't need that package as a direct dep. |
 
 ## Minimal example
 
 ```ts
-import { createAgentServer, defineSkill, tool } from "agent-server";
+import { createAgentServer, defineAgentSkill, tool } from "agent-server";
 import { z } from "zod";
 
-const helloSkill = defineSkill({
+const helloSkill = defineAgentSkill({
   name: "hello",
   mcpTools: [
     tool(
@@ -47,10 +47,12 @@ server.listen(port, () => console.log(`listening on ${port}`));
 
 The endpoint is now AG-UI-compatible at `POST /hello`. Health check at `GET /health`.
 
+Note that `createAgentServer` returns the constructed server in a **not-listening** state — `server.listen(port)` is your call. This is intentional: it lets you pick the bind host, share the handler with other routes, or attach WebSocket upgrade listeners before binding. If you don't need any of that, the two-line form above is fine. `createPdfRoute` from `agent-pdf` shows the opposite asymmetry — it returns a callable handler because it mounts inside Next's App Router which owns the listener.
+
 ## What a skill bundles
 
 ```ts
-interface Skill {
+interface AgentSkill {
   name: string;
   description?: string;
   mcpTools?: SkillTools;            // tools created via tool() — auto-namespaced
@@ -77,7 +79,7 @@ By default `agent-server` adds `Bash` to `disallowedTools` alongside `Read`, `Wr
 If any skill declares `allowedBashPrefixes`, `Bash` moves to the allowed list and a `canUseTool` callback gates each invocation against the union of every skill's prefixes:
 
 ```ts
-defineSkill({
+defineAgentSkill({
   name: "github",
   allowedBashPrefixes: ["gh "],
   requiredEnv: ["GITHUB_TOKEN"],
@@ -97,7 +99,7 @@ Most data-fetch skills don't need this — they wrap `execFile` inside an MCP to
 | `model` | — | Required. e.g. `"claude-sonnet-4-6"`. |
 | `baseSystemPrompt` | — | Required. Prepended before all skill fragments. |
 | `mcpName` | `"tools"` | MCP namespace prefix: tools appear as `mcp__<mcpName>__<tool>`. |
-| `skills` | `[]` | List of `Skill`s to compose. |
+| `skills` | `[]` | List of `AgentSkill`s to compose. |
 | `route` | `"agent"` | POST path. |
 | `port` | `8020` or `PORT` | Listen port. |
 | `allowedOrigins` | `["http://localhost:3000"]` | CORS allowlist. `"*"` opens it. |

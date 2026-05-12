@@ -53,7 +53,8 @@ function validate(input: unknown, knownTypes: ReadonlySet<string>): ValidationOu
 export interface WidgetSurfaceProps {
   spec: unknown;
   registry: DefineRegistryResult["registry"];
-  knownTypes: ReadonlySet<string>;
+  /** Component names accepted by the registry — same `componentNames` returned by `buildWebRegistry`. */
+  componentNames: readonly string[];
   /** Hide the verbose error card. Useful in PDF preview surfaces. */
   silenceErrors?: boolean;
 }
@@ -61,9 +62,10 @@ export interface WidgetSurfaceProps {
 export function WidgetSurface({
   spec,
   registry,
-  knownTypes,
+  componentNames,
   silenceErrors = false,
 }: WidgetSurfaceProps) {
+  const knownTypes = useMemo(() => new Set(componentNames), [componentNames]);
   const { spec: validated, issues } = useMemo(
     () => validate(spec, knownTypes),
     [spec, knownTypes]
@@ -71,7 +73,7 @@ export function WidgetSurface({
 
   if (!validated) {
     if (silenceErrors) return null;
-    const names = [...knownTypes].join(", ");
+    const names = componentNames.join(", ");
     return (
       <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 font-mono text-xs text-amber-900">
         <div className="mb-2 font-semibold">Bad widget spec</div>

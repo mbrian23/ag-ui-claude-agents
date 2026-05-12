@@ -15,6 +15,27 @@ export interface CreateAgentServerOptions extends CreateAdapterOptions {
   debug?: boolean;
 }
 
+/**
+ * Returned by `createAgentServer`. Note the `.listen()` contract is on
+ * **you**, not the package — the constructed `http.Server` is NOT
+ * listening yet. Call `handle.server.listen(handle.port, host?, cb?)`
+ * to bind. This is intentional so consumers can:
+ *
+ * - choose the bind host (e.g. `0.0.0.0` for containers vs `127.0.0.1`)
+ * - attach the bare `handler` to an existing Node `http.Server` they
+ *   share with other routes
+ * - attach upgrade listeners for WebSockets before binding
+ * - run the handler in a serverless / fetch-style runtime via `handler`
+ *
+ * For the simple case, two lines:
+ *
+ *     const { server, port } = createAgentServer({ ... });
+ *     server.listen(port);
+ *
+ * `createPdfRoute` from `agent-pdf` returns a callable handler instead
+ * of an object because it mounts inside a framework router (Next App
+ * Router) that owns the listener.
+ */
 export interface AgentServerHandle {
   server: http.Server;
   handler: http.RequestListener;

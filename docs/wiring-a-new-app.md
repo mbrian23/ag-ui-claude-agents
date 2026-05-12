@@ -19,7 +19,7 @@ examples/
     │       ├── server.ts               # createAgentServer({skills: [...]})
     │       └── skills/
     │           └── yours/
-    │               ├── index.ts        # defineSkill(...)
+    │               ├── index.ts        # defineAgentSkill(...)
     │               ├── prompt.ts       # systemPromptFragment string
     │               └── tools/
     │                   └── *.ts        # tool(...) definitions
@@ -149,11 +149,11 @@ namespace.`;
 
 ```ts
 // examples/your-domain/agent/src/skills/yours/index.ts
-import { defineSkill } from "agent-server";
+import { defineAgentSkill } from "agent-server";
 import { listThingsTool } from "./tools/list-things.js";
 import { YOUR_PROMPT } from "./prompt.js";
 
-export const yourSkill = defineSkill({
+export const yourSkill = defineAgentSkill({
   name: "yours",
   description: "Analyst over your data.",
   mcpTools: [listThingsTool],
@@ -327,7 +327,7 @@ ANTHROPIC_BASE_URL=https://openrouter.ai/api    # if using OpenRouter; no traili
 MODEL=anthropic/claude-haiku-4.5                 # optional
 ALLOWED_ORIGINS=http://localhost:3000            # optional
 
-# Skill-specific (declared in defineSkill({ requiredEnv: [...] })):
+# Skill-specific (declared in defineAgentSkill({ requiredEnv: [...] })):
 YOUR_API_TOKEN=...
 ```
 
@@ -362,7 +362,7 @@ Pure-JSX widgets (KPI tiles, layout cards, tables, status grids) don't need the 
 
 ## Adding a second skill
 
-Drop another `defineSkill` into the `skills` array. Common patterns:
+Drop another `defineAgentSkill` into the `skills` array. Common patterns:
 
 - **GitHub via `gh` CLI** — `requiredEnv: ["GITHUB_TOKEN"]`, MCP tool shells out via `execFile` from `node:child_process`. The CLI reads `GH_TOKEN`/`GITHUB_TOKEN` from `process.env` automatically. See `examples/devops/agent/src/skills/github/index.ts`.
 - **Jira / HTTP API** — `requiredEnv: ["JIRA_HOST", "JIRA_TOKEN"]`, MCP tool calls `fetch` with the bearer header.

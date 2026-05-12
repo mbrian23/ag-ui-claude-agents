@@ -4,12 +4,21 @@ import type { SdkMcpToolDefinition } from "@anthropic-ai/claude-agent-sdk";
 // signature (`Array<SdkMcpToolDefinition<any>>`) so heterogeneous tools
 // pass through TS variance checks without per-tool casts at call sites.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type SkillTools = ReadonlyArray<SdkMcpToolDefinition<any>>;
+export type AgentSkillTools = ReadonlyArray<SdkMcpToolDefinition<any>>;
 
-export interface Skill {
+/**
+ * A bundle of MCP tools + system-prompt fragment + bash whitelist +
+ * required env. `createAgentServer` composes a list of these into one
+ * adapter.
+ *
+ * Note: deliberately named `AgentSkill` to disambiguate from Claude
+ * Code's markdown-based Skills (loaded from `.claude/skills/`). They
+ * are unrelated abstractions despite the shared word.
+ */
+export interface AgentSkill {
   readonly name: string;
   readonly description?: string;
-  readonly mcpTools?: SkillTools;
+  readonly mcpTools?: AgentSkillTools;
   readonly systemPromptFragment?: string;
   /**
    * Bash command prefixes that are allowed when this skill is loaded.
@@ -23,6 +32,6 @@ export interface Skill {
   readonly optionalEnv?: readonly string[];
 }
 
-export function defineSkill(skill: Skill): Skill {
+export function defineAgentSkill(skill: AgentSkill): AgentSkill {
   return skill;
 }

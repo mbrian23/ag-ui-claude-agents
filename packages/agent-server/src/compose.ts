@@ -5,7 +5,7 @@ import {
   type SdkMcpToolDefinition,
 } from "@anthropic-ai/claude-agent-sdk";
 import { EXPORT_PDF_TOOL_NAME, RENDER_WIDGET_TOOL_NAME } from "agent-core";
-import type { Skill } from "./skill";
+import type { AgentSkill } from "./skill";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyTool = SdkMcpToolDefinition<any>;
@@ -29,7 +29,7 @@ export interface CreateAdapterOptions {
   description?: string;
   model: string;
   baseSystemPrompt: string;
-  skills: readonly Skill[];
+  skills: readonly AgentSkill[];
   /** MCP server name; mcp__<name>__<tool> is the Claude-side tool prefix. Default: "tools". */
   mcpName?: string;
   /** Frontend tools the chat client will declare back. Default: ["render_widget", "export_pdf"]. */
@@ -49,7 +49,7 @@ function composeSkills(
   baseSystemPrompt: string,
   mcpName: string,
   frontendToolNames: readonly string[],
-  skills: readonly Skill[]
+  skills: readonly AgentSkill[]
 ): ComposedSkills {
   const seenToolNames = new Set<string>();
   const mcpTools: AnyTool[] = [];

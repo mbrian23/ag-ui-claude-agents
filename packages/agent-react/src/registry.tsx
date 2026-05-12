@@ -18,10 +18,9 @@ const STACK_GAP_CLASS = { sm: "gap-2", md: "gap-4", lg: "gap-6" } as const;
 const STACK_DESCRIPTION =
   "Vertical column container. Use as the root when emitting more than one widget in a single response.";
 
-export interface BuildWebRegistryResult {
+interface BuildWebRegistryResult {
   registry: DefineRegistryResult["registry"];
   componentNames: readonly string[];
-  knownTypes: ReadonlySet<string>;
   catalogPromptBlock: (extraRules?: readonly string[]) => string;
 }
 
@@ -65,10 +64,9 @@ export function buildWebRegistry(widgets: readonly Widget<any>[]): BuildWebRegis
   } as never) as DefineRegistryResult;
 
   const componentNames = Object.keys(catalogComponents);
-  const knownTypes = new Set(componentNames);
 
   const catalogPromptBlock = (extraRules: readonly string[] = []): string =>
     catalog.prompt({ customRules: [...DEFAULT_RULES, ...extraRules] });
 
-  return { registry, componentNames, knownTypes, catalogPromptBlock };
+  return { registry, componentNames, catalogPromptBlock };
 }

@@ -1,7 +1,7 @@
 "use client";
 import { HttpAgent } from "@ag-ui/client";
 import type { Message, Tool } from "@ag-ui/core";
-import { combineSpecs, slugify, type Widget } from "agent-core";
+import { combineSpecs, isNonEmptySpec, slugify, type Widget } from "agent-core";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { createSpecMarkdownRenderer } from "./markdown";
@@ -146,7 +146,7 @@ export function ChatShell({
 }: ChatShellProps) {
   const pdfUrl = pdfRoute === false ? null : pdfRoute;
 
-  const { registry, componentNames, knownTypes, catalogPromptBlock } = useMemo(
+  const { registry, componentNames, catalogPromptBlock } = useMemo(
     () => buildWebRegistry(widgets),
     [widgets]
   );
@@ -281,7 +281,9 @@ export function ChatShell({
   const downloadPdf = useCallback(
     async ({ specs, text, title: pdfTitle }: { specs: unknown[]; text: string; title: string }) => {
       if (!pdfUrl) throw new Error("PDF export disabled");
-      const spec = specs.length === 1 ? specs[0] : combineSpecs(specs);
+      const validSpecs = specs.filter(isNonEmptySpec);
+      if (validSpecs.length === 0) throw new Error("No renderable widgets to export.");
+      const spec = validSpecs.length === 1 ? validSpecs[0] : combineSpecs(validSpecs);
       const res = await fetch(pdfUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -543,7 +545,7 @@ export function ChatShell({
               key={m.id}
               message={m}
               registry={registry}
-              knownTypes={knownTypes}
+              componentNames={componentNames}
               messageToMarkdown={messageToMarkdown}
               pdf={pdf}
             />
@@ -604,12 +606,12 @@ export function ChatShell({
 interface MessageBubbleProps {
   message: ChatMessage;
   registry: import("@json-render/react").DefineRegistryResult["registry"];
-  knownTypes: ReadonlySet<string>;
+  componentNames: readonly string[];
   messageToMarkdown: (text: string, specs: readonly unknown[]) => string;
   pdf: PdfActions | null;
 }
 
-function MessageBubble({ message, registry, knownTypes, messageToMarkdown, pdf }: MessageBubbleProps) {
+function MessageBubble({ message, registry, componentNames, messageToMarkdown, pdf }: MessageBubbleProps) {
   const isUser = message.role === "user";
   const doneWidgets = message.widgets.filter((w) => w.done && w.spec).map((w) => w.spec);
   const hasContent = message.text.trim().length > 0 || doneWidgets.length > 0;
@@ -637,7 +639,7 @@ function MessageBubble({ message, registry, knownTypes, messageToMarkdown, pdf }
                 key={w.toolCallId}
                 spec={w.spec}
                 registry={registry}
-                knownTypes={knownTypes}
+                componentNames={componentNames}
               />
             ) : (
               <div

@@ -1,4 +1,4 @@
-import { createAgentServer, type Skill } from "agent-server";
+import { createAgentServer, type AgentSkill } from "agent-server";
 import { devopsSkill } from "./skills/devops/index.js";
 import { githubSkill } from "./skills/github/index.js";
 
@@ -30,7 +30,7 @@ function main(): void {
   // unconditionally would force every demo run to set the token, so we
   // gate it here. Production setups should drop this branch and let
   // createAgentServer enforce the requirement.
-  const skills: Skill[] = [devopsSkill];
+  const skills: AgentSkill[] = [devopsSkill];
   if (process.env.GITHUB_TOKEN) {
     skills.push(githubSkill);
     console.log("[agent] github skill enabled");

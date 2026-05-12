@@ -1,4 +1,4 @@
-import { defineSkill, tool } from "agent-server";
+import { defineAgentSkill, tool } from "agent-server";
 import { z } from "zod";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -51,7 +51,7 @@ const listPullRequestsTool = tool(
   }
 );
 
-export const githubSkill = defineSkill({
+export const githubSkill = defineAgentSkill({
   name: "github",
   description: "GitHub data access via the `gh` CLI.",
   mcpTools: [listPullRequestsTool],
